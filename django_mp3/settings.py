@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'audio_app'
+    'audio_app',
+    'crispy_forms',
+
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'django_mp3.urls'
+
+AUTH_USER_MODEL = 'audio_app.Users'
+
+# AUTHENTICATION_BACKENDS = ['audio_app.models.EmailBackend']
 
 TEMPLATES = [
     {
@@ -110,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -127,3 +133,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# CRISPY TEMPLATE PACK ....
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Email configuration ....
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'darsh.modi1111@gmail.com'
+EMAIL_HOST_PASSWORD = 'fbscecooasmyovfk'
+EMAIL_PORT = 587

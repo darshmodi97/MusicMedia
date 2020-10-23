@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update profile</title>
+    <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
+    <link href='{% static "css/style.css"%}' rel='stylesheet' type='text/css' />
+    <link href='{% static "css/all.css"%}' rel="stylesheet">
+    <script src='{% static "js/jquery.min.js"%}'></script>
+    <script src='{% static "js/popper.min.js"%}'></script>
+    <script src='{% static "js/bootstrap.min.js"%}'></script>
+
+</head>
+<body>
+
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+            <div class="alert alert-success">
+                 {{ message }}
+            </div>
+            {% else %}
+                <div class="alert alert-danger">
+                 {{ message }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+        <div class="jumbotron">
+        <h4 style="margin-bottom:25px"> Update Profile:</h4>
+        <hr>
+        <form action="update_profile" method="post">{% csrf_token %}
+                <div class="form-group">
+                    <label> First Name : </label>
+                    <input type="text" class="form-control" name="first_name" id="first_name"  value="{{user.first_name}}">
+                </div>
+
+                <div class="form-group">
+                    <label> Last Name :</label>
+                    <input type="text" class="form-control" name="last_name" id="last_name" value="{{user.last_name}}">
+                </div>
+
+                <div class="form-group">
+                    <label> Email address</label>
+                    <input type="email" class="form-control" name="email" id="email" onkeyup="validate_email()" value="{{user.email}}" required>
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <p id="email_msg_id"></p>
+                </div>
+
+                <div class="form-group">
+                    <label> Mobile Number :</label>
+                    <input type="text" class="form-control" name="mobile" id="mobile" value="{{user.mobile}}" onkeyup="validatemobile()">
+                    <p id="mobile_msg_id"></p>
+                    <p id="mobile_check_id"></p>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="mysubmit">Update</button>
+                <button type="button" class="btn btn-primary" onclick="location.href='/'">Back</button>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    function validate_email() {
+
+    var url = "check_email";
+    var email = document.getElementById('email').value;
+    var body = "email="+email+"&csrfmiddlewaretoken={{ csrf_token }}"; //compulsory to add csrf token for post request
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
+       if (xmlhttp.responseText == "Email is already exist." || xmlhttp.responseText == "Email is required." )
+            {
+                document.getElementById("email_msg_id").style.color ="red";
+                document.getElementById("email_msg_id").innerHTML = xmlhttp.responseText;
+                document.getElementById('mysubmit').disabled = true;
+            }
+            else{
+                document.getElementById('email_msg_id').style.color ="green";
+                document.getElementById("email_msg_id").innerHTML = xmlhttp.responseText;
+                document.getElementById('mysubmit').disabled = false;
+            }
+        }
+    };
+
+    xmlhttp.open("post",url, true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.send(body);
+}
+
+
+function validatemobile() {
+            document.getElementById("mobile_check_id").innerHTML = "";
+            var mobile = document.getElementById("mobile").value;
+            var count = 0;
+            if (mobile.length != 10) {
+                document.getElementById('mysubmit').disabled = true;
+                document.getElementById("mobile_msg_id").style.color ="red";
+                document.getElementById("mobile_msg_id").innerHTML = "Mobile Number should be of 10 digits !";
+                count++;
+            }
+            else {
+                count = 0;
+                document.getElementById("mobile_msg_id").innerHTML = "";
+                document.getElementById('mysubmit').disabled = false;
+            }
+
+            if (count == 0)
+            {
+                <!--  AJAX starting -->
+                var url = "check_mobile";
+                var body = "mobile="+mobile+"&csrfmiddlewaretoken={{ csrf_token }}"; //compulsory to add csrf token for post request
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
+                        if (xmlhttp.responseText == "Mobile number is already registered." )
+                        {
+                            document.getElementById("mobile_check_id").style.color ="red";
+                            document.getElementById("mobile_check_id").innerHTML = xmlhttp.responseText;
+                            document.getElementById('mysubmit').disabled = true;
+                        }
+                        else
+                        {
+                            document.getElementById('mysubmit').disabled = false;
+                        }
+                    }
+                };
+                xmlhttp.open("post",url, true);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xmlhttp.send(body);
+            }
+}
+
+</script>
+
+</body>
+</html>

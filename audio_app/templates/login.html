@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Form</title>
+
+    <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
+    <link href='{% static "css/style.css"%}' rel='stylesheet' type='text/css' />
+    <link href='{% static "css/all.css"%}' rel="stylesheet">
+    <script src='{% static "js/jquery.min.js"%}'></script>
+    <script src='{% static "js/popper.min.js"%}'></script>
+    <script src='{% static "js/bootstrap.min.js"%}'></script>
+
+</head>
+<body>
+
+<div class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+            <div class="alert alert-success">
+                 {{ message }}
+            </div>
+            {% else %}
+                <div class="alert alert-danger">
+                 {{ message }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <h3 style="margin-top:10px">Login to your Accout </h3>
+    <hr>
+        <form action="login" method="post">{% csrf_token %}
+            <div class="form-group">
+                <label for="exampleInputEmail1"> Email address</label>
+                <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" required>
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title >Verify Account</title>
+    <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
+    <script src='{% static "js/jquery.min.js"%}'></script>
+    <script src='{% static "js/popper.min.js"%}'></script>
+    <script src='{% static "js/bootstrap.min.js"%}'></script>
+</head>
+<body>
+<div class="container">
+    {% for message in messages %}
+        <div class="alert alert-danger">
+           <strong>Error!</strong> {{ message }}  &#128549;
+         </div>
+    {% endfor %}
+
+    <h5>&divonx; Please Enter your registered email, we will send you the otp for verification. </h5>
+    <hr>
+    <form class="form-inline" action="/mail_send" method="post">{% csrf_token %}
+        <label class="mr-sm-2">Email :</label>
+        <input class="form-control mb-0 mr-sm-2" placeholder="Email Address" id="email" name="email" required>
+        <button type="submit" class="btn btn-outline-success">Send OTP</button>
+    </form>
+
+</div>
+</body>
+</html>
