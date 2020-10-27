@@ -3,6 +3,9 @@
             var currentSong = 0;
             $("#audioPlayer")[0].src = $("#playlist td a")[0];
             $("#audioPlayer")[0].play();
+            $($("#playlist td a")[0]).parent().addClass('current-song')
+
+
             $("#playlist td a").click(function(e){
                e.preventDefault();
                $("#audioPlayer")[0].src = this;

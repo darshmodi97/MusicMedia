@@ -6,7 +6,8 @@
     <title>{{ request.user.first_name }} Home Page</title>
     <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
     <link href='{% static "css/style.css"%}' rel='stylesheet' type='text/css' />
-    <link href='{% static "css/all.css"%}' rel="stylesheet">
+<!--    <link href='{% static "css/all.css"%}' rel="stylesheet">-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <script src='{% static "js/jquery.min.js"%}'></script>
     <script src='{% static "js/popper.min.js"%}'></script>
     <script src='{% static "js/bootstrap.min.js"%}'></script>
@@ -81,7 +82,7 @@
     <div class="row">
 
         {% for song in songs %}
-        <div class="col-md-4">
+        <div class="col-md-4 col-sm-12">
             <div class="card" style="width:400px">
                 <img class="card-img-top rounded" width="304" height="236" src="media/{{song.image}}">
                 <div class="card-body">
@@ -90,6 +91,7 @@
                     <p class="card-text">Movie : {{ song.movie }}</p>
                     <p class="card-text">Tags : {{ song.tags }}</p>
                     <a href="play_song?id={{song.id}}"><button type="button" class="btn btn-outline-primary">Play</button></a>
+                    <a class="ml-2" href="share?id={{song.id}}" style="border:1px solid #007bff;border-radius:12%;padding:10px;"><i class="fa fa-share-alt fa-1x" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>

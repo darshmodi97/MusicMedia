@@ -1,4 +1,5 @@
 import random
+import re
 import subprocess
 from django.contrib import messages
 from django.contrib.auth import logout, login, authenticate
@@ -16,13 +17,13 @@ logging.basicConfig(level=logging.DEBUG,
 
 # Create your views here.
 
-def index(request,get_songs=None,msg=None,msg1=None,new_get_song=None):
+def index(request, get_songs=None, msg=None, msg1=None, new_get_song=None):
     if get_songs:
-        print("first",get_songs)
-        return render(request,'index.html',{'songs':get_songs})
-    elif msg and msg1 and new_get_song :
-        print("second",new_get_song)
-        return render(request,'index.html',{'msg':msg,'msg1':msg1,'songs':new_get_song})
+        print("first", get_songs)
+        return render(request, 'index.html', {'songs': get_songs})
+    elif msg and msg1 and new_get_song:
+        print("second", new_get_song)
+        return render(request, 'index.html', {'msg': msg, 'msg1': msg1, 'songs': new_get_song})
     else:
         print("third")
         all_songs = Songs.objects.all()
@@ -33,25 +34,29 @@ def signup(request):
     if request.method == 'POST':
         signup_form = SignUpForm(request.POST)
         logging.info(f"SignUp form data: {signup_form.data}")
-        if Users.objects.filter(email=signup_form.data['email']):
-            messages.error(request, "Email is already registered.")
-            logging.error("Email is already registered")
+        mobile = signup_form.data['mobile']
+        Pattern = re.compile("(0/91)?[7-9][0-9]{9}")
+
+        if mobile.isdigit() =="False" or not Pattern.match(mobile):
+            messages.error(request, "please enter valid mobile number ..")
             return redirect('signup')
+
         elif Users.objects.filter(mobile=signup_form.data['mobile']):
             messages.error(request, "Mobile number is already registered.")
             logging.error("Mobile number is already registered")
             return redirect('signup')
-        elif signup_form.data['password1'] != signup_form.data['password2']:
-            messages.error(request, "Password is not matching ..")
-            logging.error("Passwor is not matching ..")
-            return redirect('signup')
-        else:
-            signup_form.save()
-            logging.info(f"SignUp form is saved successfully for {signup_form.data['first_name']} "
-                         f"with {signup_form.data['email']}")
-            messages.success(request, f"{signup_form.data['first_name']} you have successfully registered..")
-            return redirect('login')
 
+        else:
+            if signup_form.is_valid():
+                # signup_form.save()
+                logging.info(f"SignUp form is saved successfully for {signup_form.data['first_name']} "
+                             f"with {signup_form.data['email']}")
+                messages.success(request, f"{signup_form.data['first_name']} you have successfully registered..")
+                return redirect('login')
+            else:
+                logging.error(f"Error is : {str(signup_form.errors)}")
+                messages.error(request,str(signup_form.errors))
+                return redirect('signup')
     else:
         signup_form = SignUpForm()
         logging.info("sent blank signup form..")
@@ -125,6 +130,7 @@ def play_song(request):
     song = Songs.objects.get(id=song_id)
     return render(request, "song_page.html", {'song': song})
 
+
 def change_password(request):
     if request.user.is_authenticated:
         user = request.user
@@ -135,7 +141,7 @@ def change_password(request):
         userdata.set_password(password)
         userdata.save()
         logging.info(f"Password for {user} is successfully changed .. ")
-        subprocess.Popen(['notify-send',"your password is changed sucessfully."])
+        subprocess.Popen(['notify-send', "your password is changed sucessfully."])
         return redirect('/')
     else:
         messages.error(request, "You have to login first.")
@@ -286,7 +292,7 @@ def get_playlist(request):
         user = request.user
         get_songs_id = Like_Dislike.objects.filter(user_id=user, status=1)
         logging.info(f"{user} Getting playlist ..")
-        return render(request, 'show_playlist.html',{'songs':get_songs_id})
+        return render(request, 'show_playlist.html', {'songs': get_songs_id})
     else:
         messages.error(request, "You have to login into your account to access the playlist.")
         return redirect('login')
@@ -294,9 +300,9 @@ def get_playlist(request):
 
 def search_song(request):
     search_data = request.GET.get('search')
-    print("searche data:",search_data)
+    print("searche data:", search_data)
     get_songs = Songs.objects.filter(tags__icontains=search_data)
-    print("get_songs:",get_songs)
+    print("get_songs:", get_songs)
     logging.info("==== Showing searched songs ====")
 
     # self made search algorithm with search instead .....
@@ -305,22 +311,22 @@ def search_song(request):
             s_data = search_data.split(' ')
             for i in s_data:
                 get_songs = Songs.objects.filter(tags__icontains=i)
-                print("i",i)
+                print("i", i)
                 if get_songs:
-                    return index(request,get_songs)
+                    return index(request, get_songs)
                 else:
                     break
             l = len(search_data)
-            for i in range(l,0,-1):
+            for i in range(l, 0, -1):
                 search = search_data[0:i]
-                new_get_song = Songs.objects.filter(tags__icontains= search)
-                print("search:",search,new_get_song)
+                new_get_song = Songs.objects.filter(tags__icontains=search)
+                print("search:", search, new_get_song)
                 if new_get_song:
                     break
             msg = f"{search_data}"
             msg1 = new_get_song
-            temp =None
-            return index(request,temp,msg,msg1,new_get_song)
+            temp = None
+            return index(request, temp, msg, msg1, new_get_song)
         # temp variable to handle the number of arguments of the index() function...
 
         else:
@@ -334,3 +340,10 @@ def search_song(request):
                             "</body>"
                             "</html>")
 
+
+def share(request):
+    id = request.GET.get('id')
+    song = Songs.objects.filter(id=id).first()
+    create_link = "http://127.0.0.1:8000/" + str(song.song_file)
+
+    pass

@@ -55,7 +55,7 @@ class Users(AbstractBaseUser):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(unique=True, blank=True, max_length=100)
-    mobile = models.CharField(max_length=10, unique=True)
+    mobile = models.CharField(max_length=100, unique=True)
     last_login = models.DateTimeField(default=datetime.now())
     date_joined = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(

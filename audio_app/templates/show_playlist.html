@@ -45,15 +45,15 @@
                 <th>Play</th>
             </tr>
         </thead>
-    <tbody>
+    <tbody id="playlist">
     {% for song in songs %}
 
-        <tr id="playlist">
+        <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{song.song_id.name}}</td>
             <td>{{song.song_id.artist}}</td>
             <td>{{song.song_id.movie}}</td>
-            <td class="current-song"><a class="test" href="media/{{song.song_id.song_file}}" id="link_id{{forloop.counter}}"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a></td>
+            <td><a class="test" href="media/{{song.song_id.song_file}}" id="link_id{{forloop.counter}}"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a></td>
       </tr>
     {% endfor %}
     </tbody>
