@@ -18,6 +18,7 @@ urlpatterns=[
     path('create_playlist',views.create_playlist,name='create_playlist'),
     path('check_song',views.check_song,name='check_song'),
     path('get_playlist',views.get_playlist,name='get_playlist'),
+    path('search_song',views.search_song,name='search_song'),
 
 
 ]

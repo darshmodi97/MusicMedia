@@ -16,9 +16,17 @@ logging.basicConfig(level=logging.DEBUG,
 
 # Create your views here.
 
-def index(request):
-    all_songs = Songs.objects.all()
-    return render(request, 'index.html', {'songs': all_songs})
+def index(request,get_songs=None,msg=None,msg1=None,new_get_song=None):
+    if get_songs:
+        print("first",get_songs)
+        return render(request,'index.html',{'songs':get_songs})
+    elif msg and msg1 and new_get_song :
+        print("second",new_get_song)
+        return render(request,'index.html',{'msg':msg,'msg1':msg1,'songs':new_get_song})
+    else:
+        print("third")
+        all_songs = Songs.objects.all()
+        return render(request, 'index.html', {'songs': all_songs})
 
 
 def signup(request):
@@ -277,8 +285,52 @@ def get_playlist(request):
     if request.user.is_authenticated:
         user = request.user
         get_songs_id = Like_Dislike.objects.filter(user_id=user, status=1)
-
+        logging.info(f"{user} Getting playlist ..")
         return render(request, 'show_playlist.html',{'songs':get_songs_id})
     else:
         messages.error(request, "You have to login into your account to access the playlist.")
         return redirect('login')
+
+
+def search_song(request):
+    search_data = request.GET.get('search')
+    print("searche data:",search_data)
+    get_songs = Songs.objects.filter(tags__icontains=search_data)
+    print("get_songs:",get_songs)
+    logging.info("==== Showing searched songs ====")
+
+    # self made search algorithm with search instead .....
+    try:
+        if not get_songs:
+            s_data = search_data.split(' ')
+            for i in s_data:
+                get_songs = Songs.objects.filter(tags__icontains=i)
+                print("i",i)
+                if get_songs:
+                    return index(request,get_songs)
+                else:
+                    break
+            l = len(search_data)
+            for i in range(l,0,-1):
+                search = search_data[0:i]
+                new_get_song = Songs.objects.filter(tags__icontains= search)
+                print("search:",search,new_get_song)
+                if new_get_song:
+                    break
+            msg = f"{search_data}"
+            msg1 = new_get_song
+            temp =None
+            return index(request,temp,msg,msg1,new_get_song)
+        # temp variable to handle the number of arguments of the index() function...
+
+        else:
+            return index(request, get_songs)
+    except Exception as e:
+        logging.error(f"error {e}")
+        return HttpResponse("search result not found.."
+                            "<html>"
+                            "<body>"
+                            "<a href='/'>back</a>"
+                            "</body>"
+                            "</html>")
+
