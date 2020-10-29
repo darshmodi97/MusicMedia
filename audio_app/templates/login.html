@@ -1,21 +1,7 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Login Form</title>
+{% extends 'base.html' %}
 
-    <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
-    <link href='{% static "css/style.css"%}' rel='stylesheet' type='text/css' />
-    <link href='{% static "css/all.css"%}' rel="stylesheet">
-    <script src='{% static "js/jquery.min.js"%}'></script>
-    <script src='{% static "js/popper.min.js"%}'></script>
-    <script src='{% static "js/bootstrap.min.js"%}'></script>
 
-</head>
-<body>
-
+{% block content %}
 <div class="container">
 
     {% if messages %}
@@ -45,8 +31,10 @@
                 <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="/"><button type="button" class="btn btn-outline-primary">&blacktriangleleft; Back </button></a>
         </form>
 
 </div>
-</body>
-</html>
+    {% include "common_footer.html" %}
+{% endblock %}
+
