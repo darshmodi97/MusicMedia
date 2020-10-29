@@ -1,14 +1,17 @@
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import random
 import re
 import subprocess
 from django.contrib import messages
 from django.contrib.auth import logout, login, authenticate
-from django.core.mail import EmailMessage
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from audio_app.models import Songs, Users, Playlist, Song_Playlist_mapping, Like_Dislike
 from audio_app.forms import SignUpForm
 import logging
+
+from audio_app.utils import mail_sending
+from django_mp3.settings import STATIC_HOSTNAME
 
 Log_format = "Log Details:  %(levelname)s: %(asctime)s - %(message)s"
 logging.basicConfig(level=logging.DEBUG,
@@ -19,13 +22,10 @@ logging.basicConfig(level=logging.DEBUG,
 
 def index(request, get_songs=None, msg=None, msg1=None, new_get_song=None):
     if get_songs:
-        print("first", get_songs)
         return render(request, 'index.html', {'songs': get_songs})
     elif msg and msg1 and new_get_song:
-        print("second", new_get_song)
         return render(request, 'index.html', {'msg': msg, 'msg1': msg1, 'songs': new_get_song})
     else:
-        print("third")
         all_songs = Songs.objects.all()
         return render(request, 'index.html', {'songs': all_songs})
 
@@ -37,7 +37,7 @@ def signup(request):
         mobile = signup_form.data['mobile']
         Pattern = re.compile("(0/91)?[7-9][0-9]{9}")
 
-        if mobile.isdigit() =="False" or not Pattern.match(mobile):
+        if mobile.isdigit() == "False" or not Pattern.match(mobile):
             messages.error(request, "please enter valid mobile number ..")
             return redirect('signup')
 
@@ -55,7 +55,7 @@ def signup(request):
                 return redirect('login')
             else:
                 logging.error(f"Error is : {str(signup_form.errors)}")
-                messages.error(request,str(signup_form.errors))
+                messages.error(request, str(signup_form.errors))
                 return redirect('signup')
     else:
         signup_form = SignUpForm()
@@ -191,12 +191,10 @@ def mail_send(request):
             subject = "Regarding your password "
             body = f"We are here to Help you, " \
                    f"Here is your One Time Password for the verification : {otp}"
+            mail_sending(subject, body, to=[email])
 
-            msg = EmailMessage(subject, body, to=[email])
-            print("to :", msg.to)
-            msg.send()
             logging.info(f"Email for verification is sent to the {user}")
-            print(msg.body)
+
             messages.success(request, 'OTP sent to the registered email.')
             return render(request, 'validateOTP.html')
         else:
@@ -233,18 +231,17 @@ def create_playlist(request):
 
 
 def check_song(request):
-    if request.user.is_authenticated:
-        user = request.user
-        song_id = request.GET.get('songid')
-        song_data = Like_Dislike.objects.filter(song_id=song_id, user_id=user.id).first()
-        logging.info(f"in url: /check_song  song_data :{song_data}")
-        if song_data:
-            if song_data.status == '1':
-                return HttpResponse("song already liked.")
-            else:
-                return HttpResponse("song is not liked.")
+    user = request.user
+    song_id = request.GET.get('songid')
+    song_data = Like_Dislike.objects.filter(song_id=song_id, user_id=user.id).first()
+    logging.info(f"in url: /check_song  song_data :{song_data}")
+    if song_data:
+        if song_data.status == '1':
+            return HttpResponse("song already liked.")
         else:
-            return HttpResponse("nothing")
+            return HttpResponse("song is not liked.")
+    else:
+        return HttpResponse("nothing")
 
 
 def like_dislike(request):
@@ -290,9 +287,18 @@ def like_dislike(request):
 def get_playlist(request):
     if request.user.is_authenticated:
         user = request.user
+        page = request.GET.get('page', 1)
         get_songs_id = Like_Dislike.objects.filter(user_id=user, status=1)
         logging.info(f"{user} Getting playlist ..")
+        paginator = Paginator(get_songs_id, 2)  # Show 2 contacts per page.
+        try:
+            get_songs_id = paginator.page(page)
+        except PageNotAnInteger:
+            get_songs_id = paginator.page(1)
+        except EmptyPage:
+            get_songs_id = paginator.page(paginator.num_pages)
         return render(request, 'show_playlist.html', {'songs': get_songs_id})
+
     else:
         messages.error(request, "You have to login into your account to access the playlist.")
         return redirect('login')
@@ -300,7 +306,8 @@ def get_playlist(request):
 
 def search_song(request):
     search_data = request.GET.get('search')
-    print("searche data:", search_data)
+    print("search data:", search_data)
+    logging.info(f"user searched for {search_data}")
     get_songs = Songs.objects.filter(tags__icontains=search_data)
     print("get_songs:", get_songs)
     logging.info("==== Showing searched songs ====")
@@ -342,8 +349,24 @@ def search_song(request):
 
 
 def share(request):
-    id = request.GET.get('id')
-    song = Songs.objects.filter(id=id).first()
-    create_link = "http://127.0.0.1:8000/" + str(song.song_file)
+    if not request.session.get('s_id'):
+        s_id = request.GET.get('id')
+        request.session['s_id'] = s_id
 
-    pass
+    song = Songs.objects.filter(id=request.session.get('s_id')).first()
+    print(song)
+    logging.info(f"sending link for the song {song.name}")
+    song_link = STATIC_HOSTNAME + "/media/" + str(song.song_file)
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        subject = "Song Download link"
+        body = f"Here is your song : {song_link}"
+
+        mail_sending(subject, body, to=[email])
+        logging.info(f"Email for downloading song is sent to the email: {email}")
+        messages.success(request, 'Email sent to the user.')
+        return redirect('index')
+
+    else:
+        return render(request, 'song_share_email.html')

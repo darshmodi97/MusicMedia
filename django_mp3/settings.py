@@ -134,6 +134,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATIC_HOSTNAME= 'https://1cee0d78ff08.ngrok.io'
 
 # CRISPY TEMPLATE PACK ....
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

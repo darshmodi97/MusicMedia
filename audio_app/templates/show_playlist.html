@@ -26,15 +26,18 @@
     </style>
 </head>
 <body>
+
 <div class="container">
     <h3>{{ request.user.first_name }} your playlist:</h3>
+     <a href="/"><button type="button" class="btn btn-outline-primary">&blacktriangleleft; Back</button></a>
     <hr>
     <center>
-    <audio src="" controls id="audioPlayer">
-        Sorry, your browser doesn't support html5!
-    </audio>
+        <button id="previous" style="margin-bottom:45px ; margin-left:3px; " type="button" class="btn btn-outline-primary"><i class="fas fa-backward"></i> Previous </button>
+        <audio src="" controls id="audioPlayer" title="{{song.name}}">
+            Sorry, your browser doesn't support html5!
+        </audio>
+        <button id="next" style="margin-bottom:45px ; margin-left:3px; " type="button" class="btn btn-outline-primary">Next  <i class="fas fa-forward"></i></button>
     </center>
-
     <table class="table table-hover">
         <thead>
             <tr>
@@ -47,56 +50,64 @@
         </thead>
     <tbody id="playlist">
     {% for song in songs %}
-
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{song.song_id.name}}</td>
             <td>{{song.song_id.artist}}</td>
             <td>{{song.song_id.movie}}</td>
-            <td><a class="test" href="media/{{song.song_id.song_file}}" id="link_id{{forloop.counter}}"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a></td>
+            <td><a href="media/{{song.song_id.song_file}}" data-link_id="{{forloop.counter0}}"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a></td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
-     <button type="button" class="btn btn-outline-primary" onclick="audioPlayer()">Shuffle Play &blacktriangleright; </button>
-    <a href="/"><button type="button" class="btn btn-outline-primary">&blacktriangleleft; Back</button></a>
-</div>
+    {{songs.number}}
 
+    {% if songs.has_other_pages %}
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item">
+        {% if songs.has_previous %}
+            <a class="page-link" href="?page={{ songs.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+        {% else %}
+            <a class="page-link"  aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+        {% endif %}
+        </li>
+        {% for i in songs.paginator.page_range %}
+            {% if i <= 3 %}
+                <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" >...</a></li>
+            {% endif %}
+        {% endfor %}
+        <li class="page-item">
+
+        {% if songs.has_next %}
+          <a class="page-link" href="?page={{ songs.next_page_number }}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
+        {% else %}
+            <a class="page-link" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
+            {% endif %}
+        </li>
+      </ul>
+</nav>
+ {% endif %}
+
+</div>
 
    <script>
         audioPlayer();
     </script>
-<script>
 
-        function count(){
-            var elements = document.getElementsByClassName("test");
-            var data = []
-            for (var i =0 ;i < elements.length;i++)
-            {
-                   data.push(elements[i])
-            }
-            shuffle(data)
-        };
-
-        function shuffle(data) {
-
-              var currentIndex = data.length, temporaryValue, randomIndex;
-
-
-              // While there remain elements to shuffle...
-              while (0 !== currentIndex) {
-
-                // Pick a remaining element...
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex -= 1;
-
-                // And swap it with the current element.
-                temporaryValue = data[currentIndex];
-                data[currentIndex] = data[randomIndex];
-                data[randomIndex] = temporaryValue;
-              }
-              return data;
-        }
-</script>
 </body>
 </html>
