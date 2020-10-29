@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title >Link share</title>
     <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
     <script src='{% static "js/jquery.min.js"%}'></script>
@@ -23,6 +24,7 @@
         <label class="mr-sm-2">Email :</label>
         <input class="form-control mb-0 mr-sm-2" placeholder="Email Address" id="email" name="email" required>
         <button type="submit" class="btn btn-outline-success">Send</button>
+        <button class ='btn btn-outline-danger' type="button" onclick="location.href='/'" style="margin:10px">&blacktriangleleft; back</button>
     </form>
 
 </div>

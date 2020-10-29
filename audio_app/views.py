@@ -290,7 +290,7 @@ def get_playlist(request):
         page = request.GET.get('page', 1)
         get_songs_id = Like_Dislike.objects.filter(user_id=user, status=1)
         logging.info(f"{user} Getting playlist ..")
-        paginator = Paginator(get_songs_id, 2)  # Show 2 contacts per page.
+        paginator = Paginator(get_songs_id, 10)  # Show 10 songs per page.
         try:
             get_songs_id = paginator.page(page)
         except PageNotAnInteger:

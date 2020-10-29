@@ -3,6 +3,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>{{ request.user.first_name }} Home Page</title>
     <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
     <link href='{% static "css/style.css"%}' rel='stylesheet' type='text/css' />
@@ -11,6 +12,7 @@
     <script src='{% static "js/jquery.min.js"%}'></script>
     <script src='{% static "js/popper.min.js"%}'></script>
     <script src='{% static "js/bootstrap.min.js"%}'></script>
+
 </head>
 <body>
 <div class="bg-dark" style="width:100%">
@@ -83,7 +85,7 @@
 
         {% for song in songs %}
         <div class="col-md-4 col-sm-12">
-            <div class="card" style="width:400px">
+            <div class="card" style="width:382px">
                 <img class="card-img-top rounded" width="304" height="236" src="media/{{song.image}}">
                 <div class="card-body">
                     <h5 class="card-title">Song : {{song.name}}</h5>
