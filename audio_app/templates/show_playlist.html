@@ -33,11 +33,11 @@
      <a href="/"><button type="button" class="btn btn-outline-primary">&blacktriangleleft; Back</button></a>
     <hr>
     <center>
-        <button id="previous" style="margin-bottom:45px ; margin-left:3px; " type="button" class="btn btn-outline-primary"><i class="fas fa-backward"></i> Previous </button>
+        <button id="previous" style="margin-bottom:45px ; margin-left:3px;border-radius:15% " type="button" class="btn btn-outline-primary"><i class="fas fa-backward"></i> Previous</button>
         <audio src="" controls id="audioPlayer" title="{{song.name}}">
             Sorry, your browser doesn't support html5!
         </audio>
-        <button id="next" style="margin-bottom:45px ; margin-left:3px; " type="button" class="btn btn-outline-primary">Next  <i class="fas fa-forward"></i></button>
+        <button id="next" style="margin-bottom:45px ; margin-left:3px;border-radius:15% " type="button" class="btn btn-outline-primary"> Next <i class="fas fa-forward"></i></button>
     </center>
     <table class="table table-hover">
         <thead>
@@ -52,7 +52,7 @@
     <tbody id="playlist">
     {% for song in songs %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ songs.start_index|add:forloop.counter0  }}  </td>
             <td>{{song.song_id.name}}</td>
             <td>{{song.song_id.artist}}</td>
             <td>{{song.song_id.movie}}</td>
