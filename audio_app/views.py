@@ -10,7 +10,7 @@ from audio_app.models import Songs, Users, Playlist, Song_Playlist_mapping, Like
 from audio_app.forms import SignUpForm
 import logging
 
-from audio_app.utils import mail_sending
+from audio_app.utils import mail_sending, short_url
 from django_mp3.settings import STATIC_HOSTNAME
 
 Log_format = "Log Details:  %(levelname)s: %(asctime)s - %(message)s"
@@ -348,7 +348,7 @@ def search_song(request):
                             "</html>")
 
 
-def share(request):
+def share_from_mail(request):
     if not request.session.get('s_id'):
         s_id = request.GET.get('id')
         request.session['s_id'] = s_id
@@ -357,11 +357,12 @@ def share(request):
     print(song)
     logging.info(f"sending link for the song {song.name}")
     song_link = STATIC_HOSTNAME + "/media/" + str(song.song_file)
-
+    link = short_url(song_link)
+    logging.info(f"shorted url is : {link} ")
     if request.method == "POST":
         email = request.POST.get('email')
         subject = "Song Download link"
-        body = f"Here is your song : {song_link}"
+        body = f"Here is your song : {link}"
 
         mail_sending(subject, body, to=[email])
         logging.info(f"Email for downloading song is sent to the email: {email}")
@@ -370,3 +371,18 @@ def share(request):
 
     else:
         return render(request, 'song_share_email.html')
+
+
+def share_on_whatsapp(request):
+    print(request.GET)
+    s_id = request.GET.get('id')
+    print(s_id)
+    song = Songs.objects.filter(id=s_id).first()
+    logging.info(f"sending link for the song through whatsapp :{song.name}")
+    song_link = STATIC_HOSTNAME + "/media/" + str(song.song_file)
+    share_link = short_url(song_link)
+    logging.info(f"shorted url is : {share_link} ")
+    return HttpResponse(share_link)
+
+
+

@@ -19,7 +19,7 @@ urlpatterns=[
     path('check_song',views.check_song,name='check_song'),
     path('get_playlist',views.get_playlist,name='get_playlist'),
     path('search_song',views.search_song,name='search_song'),
-    path('share',views.share,name='share'),
-
+    path('share_from_mail',views.share_from_mail,name='share_from_mail'),
+    path('share_on_whatsapp',views.share_on_whatsapp,name='share_on_whatsapp'),
 
 ]

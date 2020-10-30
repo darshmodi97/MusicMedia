@@ -14,6 +14,7 @@
 
 </head>
 <body>
+
 <div class="bg-dark" style="width:100%">
     <div class="container">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -91,13 +92,68 @@
                     <p class="card-text" style="margin-top:10px">Movie : {{ song.movie }}</p>
                     <p class="card-text" style="margin-top:10px">Tags : {{ song.tags }}</p>
                     <a href="play_song?id={{song.id}}" ><button type="button" class="btn btn-outline-primary">Play</button></a>
-                    <a class="ml-2" href="share?id={{song.id}}" style="border:1px solid #007bff;border-radius:12%;padding:10px;"><i  class="fa fa-share-alt fa-1x" aria-hidden="true"></i></a>
+<!--                    <a class="ml-2" href="share?id={{song.id}}" style="border:1px solid #007bff;border-radius:12%;padding:10px;"><i  class="fa fa-share-alt fa-1x" aria-hidden="true"></i></a>-->
+                    <!--  Collapse  -->
+                    <a class="ml-2" data-toggle="collapse" href="#collapseExample_{{song.id}}" style="border:1px solid #007bff;border-radius:12%;padding:10px;"  role="button" aria-expanded="false" aria-controls="collapseExample">
+                        <i  class="fa fa-share-alt fa-1x" aria-hidden="true"></i>
+                    </a>
+                    <div class="collapse" id="collapseExample_{{song.id}}">
+                        <div class="card card-body">
+                            <div>
+                                <a href="share_from_mail?id={{song.id}}" style="color:black">
+                                    <i class="fa fa-envelope-square fa-1x" aria-hidden="true" style="margin-left:15px;"></i>
+                                    <label>Gmail</label>
+                                </a>
+
+                                <a data-link_id="{{song.id}}"   class="link_class" data-action="share/whatsapp/share" style="color:black">
+                                    <i class="fa fa-whatsapp" aria-hidden="true" style="margin-left:15px"></i>
+                                    <label>Whatsapp</label>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+            <!-- Collapse end ! -->
+
                 </div>
             </div>
         </div>
         {% endfor %}
+
     </div>
 </div>
+
+
+
 {% include "common_footer.html" %}
+
+<!-- for sharing through whatsapp ...-->
+<script>
+$(document).ready(function(){
+$(".link_class").click(function(){
+
+<!--    AJAX through jQuery -->
+        var song_id = $(this).attr("data-link_id")
+
+        $.ajax({
+            url:"share_on_whatsapp?id="+song_id,
+            type: 'GET',
+            success: function(data)
+            {
+                    var pre_link = "https://api.whatsapp.com/send?text="
+                    var link_from_ajax  = data
+                    var share_link = pre_link + link_from_ajax
+                    $(".link_class").attr("href",share_link)
+                    window.location.href = $('.link_class').attr('href');
+                    /* this will click button second time automatically .
+                    without this we had to click button twice to go on new href link.
+                    */
+            }
+        });
+<!--    AJAX done -->
+    });
+});
+
+</script>
+
 </body>
 </html>
