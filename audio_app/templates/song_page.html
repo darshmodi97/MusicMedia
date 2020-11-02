@@ -40,6 +40,19 @@
         };
     </script>
 
+    <style>
+        #playlist{
+            list-style: none;
+        }
+        #playlist li a{
+            color:black;
+            text-decoration: none;
+        }
+        #playlist .current-song a{
+            color:Green;
+        }
+    </style>
+
 
 
 </head>
@@ -48,15 +61,15 @@
     <div class="container" >
         <div class="row" style="margin-top:10px">
             <div class="col-md-4 col-sm-12" >
-                <img src="media/{{song.image}}" height="350px" width="350px">
+                <img src="media/{{song.image}}" height="325px" width="325px">
             </div>
             <div class="col-md-8 col-sm-12">
                 <div class="card-body">
-                        <h5 class="card-title">Song : {{song.name}}</h5>
-                        <p class="card-text">Artist : {{ song.artist }}</p>
-                        <p class="card-text">Movie : {{ song.movie }}</p>
-                        <p class="card-text">Tags : {{ song.tags }}</p>
-                        <audio controls>
+                        <h5 class="card-title">Song: {{song.name}}</h5>
+                        <p class="card-text" style="margin-bottom:5px">Artist: {{ song.artist }}</p>
+                        <p class="card-text" style="margin-bottom:5px">Movie: {{ song.movie }}</p>
+                        <p class="card-text" style="margin-bottom:5px">Tags: {{ song.tags }}</p>
+                        <audio controls autoplay id="audioPlayer">
                                 <source src="media/{{song.song_file}}">
                         </audio>
                         <a id="" href="#" onclick="like_dislike({{ song.id }})" ><i class="far fa-heart fa-3x" id="likebtn" title="Like song"></i></a>
@@ -71,13 +84,50 @@
                 </div>
             </div>
         </div>
+
+         <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Name</th>
+                <th>Artist</th>
+                <th>Movie</th>
+                <th>Play</th>
+            </tr>
+        </thead>
+    <tbody id="playlist">
+    {% for song in all_songs %}
+        <tr>
+            <td>{{ forloop.counter  }}  </td>
+            <td>{{song.name}}</td>
+            <td>{{song.artist}}</td>
+            <td>{{song.movie}}</td>
+            <td><a href="play_song?id={{song.id}}" data-song_id="{{song.id}}" data-link_id="{{forloop.counter0}}" class='play_id' ><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
     </div>
+
 </div>
 
  {% include "common_footer.html" %}
 
 
+    <script src='{% static "js/custom_audio_player.js"%}'></script>
+    <script>
+    var urlParams = new URLSearchParams(window.location.search)
+    var myParam = urlParams.get('id');
+    // getting parameter data from the url
+
+    var playback_id = $('.play_id').attr('data-link_id')
+    my_audio_player(myParam);
+
+    </script>
+
+
 <script>
+
     function create_playlist()
     {   var count =0
         var name = document.getElementById('pl_name_id').value

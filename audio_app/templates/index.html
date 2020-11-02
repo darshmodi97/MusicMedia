@@ -91,11 +91,11 @@
                     <p class="card-text" >Artist : {{ song.artist }}</p>
                     <p class="card-text" style="margin-top:10px">Movie : {{ song.movie }}</p>
                     <p class="card-text" style="margin-top:10px">Tags : {{ song.tags }}</p>
-                    <a href="play_song?id={{song.id}}" ><button type="button" class="btn btn-outline-primary">Play</button></a>
-<!--                    <a class="ml-2" href="share?id={{song.id}}" style="border:1px solid #007bff;border-radius:12%;padding:10px;"><i  class="fa fa-share-alt fa-1x" aria-hidden="true"></i></a>-->
+                    <a href="play_song?id={{song.id}}"><i class="fa fa-play-circle fa-2x mt-2" title="play" aria-hidden="true"></i></a>
+
                     <!--  Collapse  -->
-                    <a class="ml-2" data-toggle="collapse" href="#collapseExample_{{song.id}}" style="border:1px solid #007bff;border-radius:12%;padding:10px;"  role="button" aria-expanded="false" aria-controls="collapseExample">
-                        <i  class="fa fa-share-alt fa-1x" aria-hidden="true"></i>
+                    <a class="ml-2" data-toggle="collapse" href="#collapseExample_{{song.id}}"  role="button" aria-expanded="false" aria-controls="collapseExample">
+                        <i  class="fa fa-share-alt fa-2x" title="share song" aria-hidden="true"></i>
                     </a>
                     <div class="collapse" id="collapseExample_{{song.id}}">
                         <div class="card card-body">
@@ -109,6 +109,7 @@
                                     <i class="fa fa-whatsapp" aria-hidden="true" style="margin-left:15px"></i>
                                     <label>Whatsapp</label>
                                 </a>
+
                             </div>
                         </div>
                     </div>

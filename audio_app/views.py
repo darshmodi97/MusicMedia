@@ -128,7 +128,8 @@ def update_profile(request):
 def play_song(request):
     song_id = request.GET.get('id')
     song = Songs.objects.get(id=song_id)
-    return render(request, "song_page.html", {'song': song})
+    all_song = Songs.objects.all()
+    return render(request, "song_page.html", {'song': song,'all_songs':all_song})
 
 
 def change_password(request):
@@ -378,10 +379,10 @@ def share_on_whatsapp(request):
     s_id = request.GET.get('id')
     print(s_id)
     song = Songs.objects.filter(id=s_id).first()
-    logging.info(f"sending link for the song through whatsapp :{song.name}")
+    logging.info(f"sending link for the song through whatsapp : {song.name}")
     song_link = STATIC_HOSTNAME + "/media/" + str(song.song_file)
     share_link = short_url(song_link)
-    logging.info(f"shorted url is : {share_link} ")
+    logging.info(f"shorted url for whatsapp sharing is : {share_link} ")
     return HttpResponse(share_link)
 
 
