@@ -385,5 +385,3 @@ def share_on_whatsapp(request):
     logging.info(f"shorted url for whatsapp sharing is : {share_link} ")
     return HttpResponse(share_link)
 
-
-

@@ -79,18 +79,17 @@
             </div>
     {% endfor %}
 
-<div class="container" style="margin-top:5px">
+<div class="container" >
     <div class="row">
 
         {% for song in songs %}
-        <div class="col-md-4 col-sm-12" >
-            <div class="card" style="width:382px">
-                <img class="card-img-top rounded" width="304" height="236" src="media/{{song.image}}">
-                <div class="card-body">
+        <div class="col-md-4 col-sm-12 mt-3" >
+            <div class="card" style="width:370px">
+                <a href="play_song?id={{song.id}}"><img class="card-img-top rounded" width="300" height="236" src="media/{{song.image}}"></a>
+                <div class="card-body" style="padding:35px">
                     <h5 class="card-title">Song : {{song.name}}</h5>
                     <p class="card-text" >Artist : {{ song.artist }}</p>
                     <p class="card-text" style="margin-top:10px">Movie : {{ song.movie }}</p>
-                    <p class="card-text" style="margin-top:10px">Tags : {{ song.tags }}</p>
                     <a href="play_song?id={{song.id}}"><i class="fa fa-play-circle fa-2x mt-2" title="play" aria-hidden="true"></i></a>
 
                     <!--  Collapse  -->

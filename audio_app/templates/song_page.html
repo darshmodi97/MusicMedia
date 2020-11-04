@@ -23,7 +23,7 @@
                     {
                         if (xmlhttp.responseText == 'song already liked.')
                         {
-                            document.getElementById('likebtn').className ="fas fa-heart fa-3x";
+                            document.getElementById('likebtn').className ="fas fa-heart fa-2x";
                             document.getElementById('likebtn').style.color ="red";
                             document.getElementById('likebtn').title ="Liked";
                         }
@@ -57,11 +57,58 @@
 
 </head>
 <body id="songbody" onload="check_song({{song.id}})">
+
+<div class="bg-dark" style="width:100%">
+    <div class="container">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">MusicMedia</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+    {% if not user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link" href="signup">SignUp</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="login">Login</a>
+        </li>
+    {% else %}
+        <li class="nav-item active">
+            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Welcome {{ request.user.first_name }}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="update_profile">Update Profile</a>
+                <a class="dropdown-item" href="mail_send">Change Password</a>
+                <a class="dropdown-item" href="get_playlist">Play My Playlist</a>
+            <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="logout">Logout</a>
+            </div>
+            {% endif %}
+        </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="search_song" method="get">
+      <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+</ul>
+</nav>
+    </div>
+</div>
+
 <div class="container-fluid" >
     <div class="container" >
         <div class="row" style="margin-top:10px">
             <div class="col-md-4 col-sm-12" >
-                <img src="media/{{song.image}}" height="325px" width="325px">
+                <img src="media/{{song.image}}" height="300px" width="300px">
             </div>
             <div class="col-md-8 col-sm-12">
                 <div class="card-body">
@@ -69,10 +116,13 @@
                         <p class="card-text" style="margin-bottom:5px">Artist: {{ song.artist }}</p>
                         <p class="card-text" style="margin-bottom:5px">Movie: {{ song.movie }}</p>
                         <p class="card-text" style="margin-bottom:5px">Tags: {{ song.tags }}</p>
+
                         <audio controls autoplay id="audioPlayer">
                                 <source src="media/{{song.song_file}}">
                         </audio>
-                        <a id="" href="#" onclick="like_dislike({{ song.id }})" ><i class="far fa-heart fa-3x" id="likebtn" title="Like song"></i></a>
+                        <div>
+                            <a id="like_btn" href="#" onclick="like_dislike({{ song.id }})" ><i class="far fa-heart fa-2x" id="likebtn" title="Like song"></i></a>
+                        </div>
                         <p id="msg"></p>
                     <a href="/"><button type="button" class="btn btn-outline-primary">&blacktriangleleft; Back </button></a>
                     <div id="create_playlist_id" class="form-group" style="margin-top:10px" hidden>
