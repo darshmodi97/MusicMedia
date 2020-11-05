@@ -48,7 +48,7 @@ def signup(request):
 
         else:
             if signup_form.is_valid():
-                # signup_form.save()
+                signup_form.save()
                 logging.info(f"SignUp form is saved successfully for {signup_form.data['first_name']} "
                              f"with {signup_form.data['email']}")
                 messages.success(request, f"{signup_form.data['first_name']} you have successfully registered..")
