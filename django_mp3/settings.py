@@ -25,7 +25,7 @@ SECRET_KEY = 'zj*hz3-!y3xi#biczvr^@%kx089bpvnmxvuiih5&ez!drd=fb@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1',]
 
 
 # Application definition
@@ -82,12 +82,12 @@ WSGI_APPLICATION = 'django_mp3.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Audio_DB',
-        'USER': 'root',
+        'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
-        'PORT': 3306
+        'PORT': '5432'
     }
 }
 
@@ -136,7 +136,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATIC_HOSTNAME= 'https://dfd7c3580a70.ngrok.io'
+STATIC_HOSTNAME= '127.0.0.1:8000'
 
 # CRISPY TEMPLATE PACK ....
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -144,6 +144,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Email configuration ....
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'darsh.modi1111@gmail.com'
-EMAIL_HOST_PASSWORD = 'fbscecooasmyovfk'
+EMAIL_HOST_USER = 'acquaint.developer97@gmail.com'
+EMAIL_HOST_PASSWORD = 'ogsjojfvkgkyynlb'
 EMAIL_PORT = 587

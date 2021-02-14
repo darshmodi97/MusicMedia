@@ -1,110 +1,47 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{{ request.user.first_name }} Home Page</title>
-    <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
-    <link href='{% static "css/style1.css"%}' rel='stylesheet' type='text/css' />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <script src='{% static "js/jquery.min.js"%}'></script>
-    <script src='{% static "js/popper.min.js"%}'></script>
-    <script src='{% static "js/bootstrap.min.js"%}'></script>
-
-</head>
-<body>
-
-<div class="bg-dark" style="width:100%">
-    <div class="container">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="/">MusicMedia</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-    {% if not user.is_authenticated %}
-        <li class="nav-item">
-            <a class="nav-link" href="signup">SignUp</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="login">Login</a>
-        </li>
-    {% else %}
-        <li class="nav-item active">
-            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Welcome {{ request.user.first_name }}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="update_profile">Update Profile</a>
-                <a class="dropdown-item" href="mail_send">Change Password</a>
-                <a class="dropdown-item" href="get_playlist">Play My Playlist</a>
-            <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="logout">Logout</a>
-            </div>
-            {% endif %}
-        </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0" action="search_song" method="get">
-      <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
-</ul>
-</nav>
-    </div>
-</div>
-    {% if msg and msg1 %}
-    <div class="container" style="text-align:right;">
+{% extends 'base.html' %} {% load static %} {% block content %} {% if msg and msg1 %}
+<div class="container" style="text-align:right;">
     <div class="row">
         <div class="col-12">
-        <p>you searched for <b>{{msg}}</b></p>
-        {% for msg1 in msg1 %}
-        <p>search instead <a href="search_song?search={{msg1}}"><b>{{msg1}}</b></a></p>
-        {% endfor %}
-         </div>
+            <p>you searched for <b>{{msg}}</b></p>
+            {% for msg1 in msg1 %}
+            <p>search instead <a href="/search_song/?search={{msg1}}"><b>{{msg1}}</b></a></p>
+            {% endfor %}
+        </div>
     </div>
-    </div>
-    {% endif %}
+</div>
+{% endif %} {% for message in messages %}
+<div class="alert alert-success">
+    {{ message }}
+</div>
+{% endfor %}
 
-    {% for message in messages %}
-            <div class="alert alert-success">
-                 {{ message }}
-            </div>
-    {% endfor %}
-
-<div class="container" >
+<div class="container">
     <div class="row">
 
         {% for song in songs %}
-        <div class="col-md-4 col-sm-12 mt-3" >
-            <div class="card" style="width:370px">
-                <a href="play_song?id={{song.id}}"><img class="card-img-top rounded" width="300" height="236" src="media/{{song.image}}"></a>
+        <div class="col-md-4 col-sm-12 mt-3">
+            <div class="card">
+                <a href="play_song?id={{song.id}}"><img class="card-img-top rounded" width="300" height="236" src="/media/{{song.image}}"></a>
                 <div class="card-body" style="padding:35px">
                     <h5 class="card-title">Song : {{song.name}}</h5>
-                    <p class="card-text" >Artist : {{ song.artist }}</p>
+                    <p class="card-text">Artist : {{ song.artist }}</p>
                     <p class="card-text" style="margin-top:10px">Movie : {{ song.movie }}</p>
-                    <a href="play_song?id={{song.id}}"><i class="fa fa-play-circle fa-2x mt-2" title="play" aria-hidden="true"></i></a>
+                    <a href="/play_song/?id={{song.id}}"><i class="fa fa-play-circle fa-2x mt-2" title="play"
+                                aria-hidden="true"></i></a>
 
                     <!--  Collapse  -->
-                    <a class="ml-2" data-toggle="collapse" href="#collapseExample_{{song.id}}"  role="button" aria-expanded="false" aria-controls="collapseExample">
-                        <i  class="fa fa-share-alt fa-2x" title="share song" aria-hidden="true"></i>
+                    <a class="ml-2" data-toggle="collapse" href="#collapseExample_{{song.id}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        <i class="fa fa-share-alt fa-2x" title="share song" aria-hidden="true"></i>
                     </a>
                     <div class="collapse" id="collapseExample_{{song.id}}">
                         <div class="card card-body">
                             <div>
-                                <a href="share_from_mail?id={{song.id}}" style="color:black">
+                                <a href="/share_from_mail/?id={{song.id}}" style="color:black">
                                     <i class="fa fa-envelope-square fa-1x" aria-hidden="true" style="margin-left:15px;"></i>
                                     <label>Gmail</label>
                                 </a>
 
-                                <a data-link_id="{{song.id}}"   class="link_class" data-action="share/whatsapp/share" style="color:black">
+                                <a data-link_id="{{song.id}}" class="link_class" data-action="share/whatsapp/share" style="color:black">
                                     <i class="fa fa-whatsapp" aria-hidden="true" style="margin-left:15px"></i>
                                     <label>Whatsapp</label>
                                 </a>
@@ -112,7 +49,7 @@
                             </div>
                         </div>
                     </div>
-            <!-- Collapse end ! -->
+                    <!-- Collapse end ! -->
 
                 </div>
             </div>
@@ -121,39 +58,30 @@
 
     </div>
 </div>
-
-
-
-{% include "common_footer.html" %}
-
 <!-- for sharing through whatsapp ...-->
 <script>
-$(document).ready(function(){
-$(".link_class").click(function(){
+    $(document).ready(function() {
+        $(".link_class").click(function() {
 
-<!--    AJAX through jQuery -->
-        var song_id = $(this).attr("data-link_id")
+            // !--AJAX through jQuery-- >
+            var song_id = $(this).attr("data-link_id");
 
-        $.ajax({
-            url:"share_on_whatsapp?id="+song_id,
-            type: 'GET',
-            success: function(data)
-            {
-                    var pre_link = "https://api.whatsapp.com/send?text="
-                    var link_from_ajax  = data
+            $.ajax({
+                url: "/share_on_whatsapp/?id=" + song_id,
+                type: 'GET',
+                success: function(data) {
+                    var pre_link = "https://api.whatsapp.com/send?text=";
+                    var link_from_ajax = data;
                     var share_link = pre_link + link_from_ajax
-                    $(".link_class").attr("href",share_link)
+                    $(".link_class").attr("href", share_link)
                     window.location.href = $('.link_class').attr('href');
                     /* this will click button second time automatically .
                     without this we had to click button twice to go on new href link.
                     */
-            }
+                }
+            });
+            // !--AJAX done-- >
         });
-<!--    AJAX done -->
     });
-});
-
 </script>
-
-</body>
-</html>
+{% endblock %}

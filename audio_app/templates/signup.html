@@ -17,6 +17,7 @@
 </head>
 <body>
 <div class="container">
+
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-danger">
@@ -24,9 +25,12 @@
             </div>
         {% endfor %}
     {% endif %}
+    {% if form.error.password2 %}
+        {{form.error.password2}}
+    {% endif %}
     <h2 style="text-align:center">SignUp</h2>
     <hr>
-    <form action="signup" method="post">
+    <form action="{% url 'signup' %}" method="post">
         {% csrf_token %}
         {{ form|crispy }}
         <div class="form-group">
@@ -35,6 +39,5 @@
         </div>
     </form>
 </div>
-{% include "common_footer.html" %}
 </body>
 </html>

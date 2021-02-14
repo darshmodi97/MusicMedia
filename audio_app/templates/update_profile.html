@@ -33,7 +33,7 @@
         <div class="jumbotron">
         <h4 style="margin-bottom:25px"> Update Profile:</h4>
         <hr>
-        <form action="update_profile" method="post">{% csrf_token %}
+        <form action="{% url 'update_profile'%}" method="post">{% csrf_token %}
                 <div class="form-group">
                     <label> First Name : </label>
                     <input type="text" class="form-control" name="first_name" id="first_name"  value="{{user.first_name}}">
@@ -64,11 +64,10 @@
         </form>
     </div>
 </div>
-{% include "common_footer.html" %}
 <script>
     function validate_email() {
 
-    var url = "check_email";
+    var url = "/check_email/";
     var email = document.getElementById('email').value;
     var body = "email="+email+"&csrfmiddlewaretoken={{ csrf_token }}"; //compulsory to add csrf token for post request
 
@@ -116,7 +115,7 @@ function validatemobile() {
             if (count == 0)
             {
                 <!--  AJAX starting -->
-                var url = "check_mobile";
+                var url = "/check_mobile/";
                 var body = "mobile="+mobile+"&csrfmiddlewaretoken={{ csrf_token }}"; //compulsory to add csrf token for post request
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
@@ -130,6 +129,8 @@ function validatemobile() {
                         }
                         else
                         {
+                            document.getElementById("mobile_check_id").style.color ="green";
+                            document.getElementById("mobile_check_id").innerHTML = xmlhttp.responseText;
                             document.getElementById('mysubmit').disabled = false;
                         }
                     }

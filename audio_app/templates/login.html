@@ -20,7 +20,7 @@
 
     <h3 style="margin-top:10px">Login to your Accout </h3>
     <hr>
-        <form action="login" method="post">{% csrf_token %}
+        <form action="{% url 'login' %}" method="post">{% csrf_token %}
             <div class="form-group">
                 <label for="exampleInputEmail1"> Email address</label>
                 <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" required>
@@ -35,6 +35,5 @@
         </form>
 
 </div>
-    {% include "common_footer.html" %}
 {% endblock %}
 

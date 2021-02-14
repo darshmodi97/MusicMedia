@@ -1,7 +1,6 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import random
 import re
-import subprocess
 from django.contrib import messages
 from django.contrib.auth import logout, login, authenticate
 from django.http import HttpResponse
@@ -9,7 +8,7 @@ from django.shortcuts import render, redirect
 from audio_app.models import Songs, Users, Playlist, Song_Playlist_mapping, Like_Dislike
 from audio_app.forms import SignUpForm
 import logging
-
+from django.contrib.auth.decorators import login_required
 from audio_app.utils import mail_sending, short_url
 from django_mp3.settings import STATIC_HOSTNAME
 
@@ -56,7 +55,7 @@ def signup(request):
             else:
                 logging.error(f"Error is : {str(signup_form.errors)}")
                 messages.error(request, str(signup_form.errors))
-                return redirect('signup')
+                return render(request,'signup.html',{'form':signup_form})
     else:
         signup_form = SignUpForm()
         logging.info("sent blank signup form..")
@@ -72,9 +71,7 @@ def get_login(request):
         if user is not None:
             login(request, user)
             logging.info(f"{user} logged in successfully ")
-            messages.success(request, "Login successful..")
-            msg = f"Welcome {user.first_name} {user.last_name} to MusicMedia"
-            subprocess.Popen(['notify-send', msg])
+            messages.success(request, "Login successful..")            
             return redirect('index')
         else:
             logging.error("User provided Invalid credentials")
@@ -89,7 +86,6 @@ def get_logout(request):
     request.session.clear()
     logout(request)
     logging.info("User logged out successfully.")
-    subprocess.Popen(['notify-send', "Logged out successfully."])
     messages.success(request, 'You have successfully logged out..')
     return redirect('index')
 
@@ -100,21 +96,26 @@ def update_profile(request):
         print(user.id)
         logging.info(f"url: /update_profile  is called by {user}")
         userdata = Users.objects.get(id=user.id)
-        print(userdata)
-        if request.method == 'POST':
+        print(userdata.mobile)
+        if request.method == 'POST' and userdata:
 
             first_name = request.POST.get('first_name')
             last_name = request.POST.get('last_name')
             email = request.POST.get('email')
             mobile = request.POST.get('mobile')
 
+            if Users.objects.filter(mobile=mobile).exclude(id=userdata.id).exists() and mobile:
+                messages.error(request,"This Mobile number is already registered.")
+                return render(request,'update_profile.html',{'user': userdata})
+            if Users.objects.filter(email=email).exclude(id=userdata.id).exists() and email:
+                messages.error(request,"Email is already registered with other account.")
+                return render(request,'update_profile.html',{'user': userdata})
             userdata.first_name = first_name
             userdata.last_name = last_name
             userdata.email = email
             userdata.mobile = mobile
             userdata.save()
             logging.info(f"Update Profile successfully..for {userdata}")
-            subprocess.Popen(['notify-send', "Update Profile successfully.."])
             messages.success(request, 'Your profile is successfully updated.')
             return render(request, 'update_profile.html', {'user': userdata})
         else:
@@ -142,7 +143,7 @@ def change_password(request):
         userdata.set_password(password)
         userdata.save()
         logging.info(f"Password for {user} is successfully changed .. ")
-        subprocess.Popen(['notify-send', "your password is changed sucessfully."])
+        messages.success(request,"Password successfully changed.")
         return redirect('/')
     else:
         messages.error(request, "You have to login first.")
@@ -153,8 +154,8 @@ def check_email(request):
     if request.user.is_authenticated:
         email = request.POST.get('email')
         if email:
-            get_email = Users.objects.filter(email=email).first()
-            logging.ingo("url: /check_email  checking email whethere it is already registered or not.")
+            get_email = Users.objects.filter(email=email).exclude(id=request.user.id).first()
+            logging.info("url: /check_email  checking email whethere it is already registered or not.")
             if get_email:
                 return HttpResponse("Email is already exist.")
             else:
@@ -170,8 +171,8 @@ def check_mobile(request):
     if request.user.is_authenticated:
 
         mobile = request.POST.get('mobile')
-        get_mobile = Users.objects.filter(mobile=mobile).first()
-        logging.ingo("url: /check_mobile  checking mobile number whethere it is already registered or not.")
+        get_mobile = Users.objects.filter(mobile=mobile).exclude(id=request.user.id).first()
+        logging.info("url: /check_mobile  checking mobile number whethere it is already registered or not.")
         if get_mobile:
             return HttpResponse("Mobile number is already registered.")
         else:
@@ -180,7 +181,7 @@ def check_mobile(request):
         messages.error(request, "Sorry you have to login first in your account to change your mobile number")
         return redirect('login')
 
-
+@login_required(login_url='login')
 def mail_send(request):
     if request.method == "POST":
         email = request.POST.get('email')
@@ -189,7 +190,7 @@ def mail_send(request):
             otp = str(random.randint(100000, 999999))
             logging.info(f"OTP : {otp} sent to the {user}")
             request.session['otp'] = otp
-            subject = "Regarding your password "
+            subject = "Password reset request "
             body = f"We are here to Help you, " \
                    f"Here is your One Time Password for the verification : {otp}"
             mail_sending(subject, body, to=[email])
@@ -205,6 +206,7 @@ def mail_send(request):
         return render(request, 'email.html')
 
 
+@login_required(login_url='login')
 def validate_otp(request):
     sent_otp = request.session.get('otp')
     received_otp = request.POST.get('otp')
@@ -231,6 +233,7 @@ def create_playlist(request):
         return redirect('login')
 
 
+@login_required(login_url='login')
 def check_song(request):
     user = request.user
     song_id = request.GET.get('songid')
@@ -375,13 +378,10 @@ def share_from_mail(request):
 
 
 def share_on_whatsapp(request):
-    print(request.GET)
     s_id = request.GET.get('id')
-    print(s_id)
     song = Songs.objects.filter(id=s_id).first()
     logging.info(f"sending link for the song through whatsapp : {song.name}")
     song_link = STATIC_HOSTNAME + "/media/" + str(song.song_file)
     share_link = short_url(song_link)
     logging.info(f"shorted url for whatsapp sharing is : {share_link} ")
     return HttpResponse(share_link)
-

@@ -1,285 +1,261 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>{{ song.name }}</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" type="image/png" href="{% static '/image/fevicon.jfif' %}" />
     <link href='{% static "css/bootstrap.min.css"%}' rel='stylesheet' type='text/css' />
     <link href='{% static "css/style1.css"%}' rel='stylesheet' type='text/css' />
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
     <link href='{% static "css/media_control.css"%}' rel='stylesheet' type='text/css' />
     <script src='{% static "js/jquery.min.js"%}'></script>
     <script src='{% static "js/popper.min.js"%}'></script>
     <script src='{% static "js/bootstrap.min.js"%}'></script>
 
     <script>
-        function check_song(song_id)
-        {
-            var url = "check_song?songid="+song_id
+        function check_song(song_id) {
+            var url = "/check_song/?songid=" + song_id
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function()
-            {
-                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-                    {
-                        if (xmlhttp.responseText == 'song already liked.')
-                        {
-                            document.getElementById('likebtn').className ="fas fa-heart fa-2x";
-                            document.getElementById('likebtn').style.color ="red";
-                            document.getElementById('likebtn').title ="Liked";
-                        }
-                        else
-                        {
-                            document.getElementById('likebtn').className ="far fa-heart fa-3x";
-                            document.getElementById('likebtn').style.color ="black";
-                            document.getElementById('likebtn').title ="Like song";
-                        }
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    if (xmlhttp.responseText == 'song already liked.') {
+                        document.getElementById('likebtn').className = "fas fa-heart fa-2x";
+                        document.getElementById('likebtn').style.color = "red";
+                        document.getElementById('likebtn').title = "Liked";
+                    } else {
+                        document.getElementById('likebtn').className = "far fa-heart fa-3x";
+                        document.getElementById('likebtn').style.color = "black";
+                        document.getElementById('likebtn').title = "Like song";
                     }
+                }
             };
-            xmlhttp.open("GET",url, true);
+            xmlhttp.open("GET", url, true);
             xmlhttp.send();
         };
     </script>
 
     <style>
-        #playlist{
+        #playlist {
             list-style: none;
         }
-        #playlist li a{
-            color:black;
+        
+        #playlist li a {
+            color: black;
             text-decoration: none;
         }
-        #playlist .current-song a{
-            color:Green;
+        
+        #playlist .current-song a {
+            color: Green;
         }
     </style>
 
 
 
 </head>
-<body id="songbody" onload="check_song({{song.id}})">
 
-<div class="bg-dark" style="width:100%">
-    <div class="container">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="/">MusicMedia</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<body id="songbody" onload="check_song(song_id={{song.id}})">
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-    {% if not user.is_authenticated %}
-        <li class="nav-item">
-            <a class="nav-link" href="signup">SignUp</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="login">Login</a>
-        </li>
-    {% else %}
-        <li class="nav-item active">
-            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Welcome {{ request.user.first_name }}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="update_profile">Update Profile</a>
-                <a class="dropdown-item" href="mail_send">Change Password</a>
-                <a class="dropdown-item" href="get_playlist">Play My Playlist</a>
-            <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="logout">Logout</a>
-            </div>
-            {% endif %}
-        </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0" action="search_song" method="get">
-      <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
-</ul>
-</nav>
+    <div class="bg-dark">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="/">MusicMedia</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        {% if not user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'signup' %}">SignUp</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Welcome {{ request.user.first_name }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'update_profile' %}">Update Profile</a>
+                                <a class="dropdown-item" href="{% url 'mail_send' %}">Change Password</a>
+                                <a class="dropdown-item" href="{% url 'get_playlist' %}">Play My Playlist</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                            </div>
+                            {% endif %}
+                        </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0" action="search_song" method="get">
+                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+            </ul>
+            </nav>
+        </div>
     </div>
-</div>
 
-<div class="container-fluid" >
-    <div class="container" >
-        <div class="row" style="margin-top:10px">
-            <div class="col-md-4 col-sm-12" >
-                <img src="media/{{song.image}}" height="300px" width="300px">
-            </div>
-            <div class="col-md-8 col-sm-12">
-                <div class="card-body">
+    <div class="container-fluid">
+        <div class="container">
+            <div class="row" style="margin-top:10px">
+                <div class="col-md-4 col-sm-12">
+                    <img src="/media/{{song.image}}" height="300px" width="300px">
+                </div>
+                <div class="col-md-8 col-sm-12">
+                    <div class="card-body">
                         <h5 class="card-title">Song: {{song.name}}</h5>
                         <p class="card-text" style="margin-bottom:5px">Artist: {{ song.artist }}</p>
                         <p class="card-text" style="margin-bottom:5px">Movie: {{ song.movie }}</p>
                         <p class="card-text" style="margin-bottom:5px">Tags: {{ song.tags }}</p>
 
-                        <audio controls autoplay id="audioPlayer">
-                                <source src="media/{{song.song_file}}">
-                        </audio>
+                        <audio controls autoplay id="audioPlayer" style="width: 100%;">
+                                <source src="/media/{{song.song_file}}">
+                            </audio>
+
                         <div>
-                            <a id="like_btn" href="#" onclick="like_dislike({{ song.id }})" ><i class="far fa-heart fa-2x" id="likebtn" title="Like song"></i></a>
+                            <a id="like_btn" href="#" onclick="like_dislike({{ song.id }})"><i class="far fa-heart fa-2x" id="likebtn" title="Like song"></i></a>
                         </div>
                         <p id="msg"></p>
-                    <a href="/"><button type="button" class="btn btn-outline-primary">&blacktriangleleft; Back </button></a>
-                    <div id="create_playlist_id" class="form-group" style="margin-top:10px" hidden>
-                        <label>Name :</label>
-                        <input type="text" class="form-control" name="playlist_name" id="pl_name_id"><br>
-                        <button type="button" id="btn" class="btn btn-outline-primary" onclick="create_playlist()">create playlist </button>
+                        <a href="/"><button type="button" class="btn btn-outline-primary">&blacktriangleleft; Back </button></a>
+                        <div id="create_playlist_id" class="form-group" style="margin-top:10px" hidden>
+                            <label>Name :</label>
+                            <input type="text" class="form-control" name="playlist_name" id="pl_name_id"><br>
+                            <button type="button" id="btn" class="btn btn-outline-primary" onclick="create_playlist()">create playlist </button>
+                        </div>
+                        <p id="pl_msg_id"></p>
                     </div>
-                    <p id="pl_msg_id"></p>
                 </div>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Index</th>
+                            <th>Name</th>
+                            <th>Artist</th>
+                            <th>Movie</th>
+                            <th>Play</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playlist">
+                        {% for song in all_songs %}
+                        <tr>
+                            <td>{{ forloop.counter }} </td>
+                            <td>{{song.name}}</td>
+                            <td>{{song.artist}}</td>
+                            <td>{{song.movie}}</td>
+                            <td><a href="/play_song?id={{song.id}}" data-song_id="{{song.id}}" data-link_id="{{forloop.counter0}}" class='play_id'><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
-         <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Index</th>
-                <th>Name</th>
-                <th>Artist</th>
-                <th>Movie</th>
-                <th>Play</th>
-            </tr>
-        </thead>
-    <tbody id="playlist">
-    {% for song in all_songs %}
-        <tr>
-            <td>{{ forloop.counter  }}  </td>
-            <td>{{song.name}}</td>
-            <td>{{song.artist}}</td>
-            <td>{{song.movie}}</td>
-            <td><a href="play_song?id={{song.id}}" data-song_id="{{song.id}}" data-link_id="{{forloop.counter0}}" class='play_id' ><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></a></td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
     </div>
-
-</div>
-
- {% include "common_footer.html" %}
-
 
     <script src='{% static "js/custom_audio_player.js"%}'></script>
     <script>
-    var urlParams = new URLSearchParams(window.location.search)
-    var myParam = urlParams.get('id');
-    // getting parameter data from the url
+        var urlParams = new URLSearchParams(window.location.search)
+        var myParam = urlParams.get('id');
+        // getting parameter data from the url
 
-    var playback_id = $('.play_id').attr('data-link_id')
-    my_audio_player(myParam);
-
+        var playback_id = $('.play_id').attr('data-link_id')
+        my_audio_player(myParam);
     </script>
 
 
-<script>
+    <script>
+        function create_playlist() {
+            var count = 0
+            var name = document.getElementById('pl_name_id').value
+            var url = "/create_playlist/?name=" + name
 
-    function create_playlist()
-    {   var count =0
-        var name = document.getElementById('pl_name_id').value
-        var url = "create_playlist?name="+name
+            if (name == '') {
+                document.getElementById("pl_msg_id").style.color = "red";
+                document.getElementById("pl_msg_id").innerHTML = "* Name required"
+            } else {
 
-        if (name == '')
-        {
-            document.getElementById("pl_msg_id").style.color ="red";
-            document.getElementById("pl_msg_id").innerHTML = "* Name required"
-        }
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        if (xmlhttp.responseText == 'Playlist created successfully.') {
+                            document.getElementById("create_playlist_id").hidden = true;
+                            document.getElementById("pl_msg_id").style.color = "green";
+                            document.getElementById("pl_msg_id").innerHTML = xmlhttp.responseText;
+                            setTimeout(function() {
+                                document.getElementById("pl_msg_id").innerHTML = '';
+                            }, 3000);
+                        }
+                    }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send();
+            }
+        };
 
-        else {
 
+        function like_dislike(song_id) {
+            var status
+            if (document.getElementById('likebtn').style.color === "red") {
+                document.getElementById('likebtn').className = "far fa-heart fa-3x";
+                document.getElementById('likebtn').style.color = "black";
+                document.getElementById('likebtn').title = "Like song";
+                status = 0
+            } else {
+                document.getElementById('likebtn').className = "fas fa-heart fa-3x";
+                document.getElementById('likebtn').style.color = "red";
+                document.getElementById('likebtn').title = "Liked";
+                status = 1
+            }
+            <!-- AJAX for response text    -->
+            var url = "/like_dislike/?songid=" + song_id + "&status=" + status;
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function()
-            {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-                {
-                    if (xmlhttp.responseText == 'Playlist created successfully.')
-                    {
-                        document.getElementById("create_playlist_id").hidden =true;
-                        document.getElementById("pl_msg_id").style.color ="green";
-                        document.getElementById("pl_msg_id").innerHTML = xmlhttp.responseText;
-                        setTimeout(function()
-                        {
-                            document.getElementById("pl_msg_id").innerHTML = '';
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    if (xmlhttp.responseText == 'song is added to your playlist.') {
+                        document.getElementById("msg").style.color = "green";
+                        document.getElementById("msg").innerHTML = xmlhttp.responseText;
+                        setTimeout(function() {
+                            document.getElementById("msg").innerHTML = '';
+                        }, 3000);
+                    } else if (xmlhttp.responseText == "You don't have your playlist please create your playlist first.") {
+                        document.getElementById('likebtn').className = "far fa-heart fa-3x";
+                        document.getElementById('likebtn').style.color = "black";
+                        document.getElementById("msg").innerHTML = xmlhttp.responseText;
+                        document.getElementById("msg").style.color = "red";
+                        setTimeout(function() {
+                            document.getElementById("msg").innerHTML = '';
+                        }, 5000);
+                        document.getElementById("create_playlist_id").hidden = false;
+                    } else {
+                        document.getElementById('likebtn').className = "far fa-heart fa-3x";
+                        document.getElementById('likebtn').style.color = "black";
+                        document.getElementById('likebtn').title = "Like song";
+                        document.getElementById("msg").innerHTML = xmlhttp.responseText;
+                        document.getElementById("msg").style.color = "red";
+                        setTimeout(function() {
+                            document.getElementById("msg").innerHTML = '';
                         }, 3000);
                     }
                 }
             };
-            xmlhttp.open("GET",url, true);
+            xmlhttp.open("GET", url, true);
             xmlhttp.send();
-        }
-    };
-
-
-    function like_dislike(song_id)
-    {
-        var status
-        if (document.getElementById('likebtn').style.color === "red")
-        {
-        document.getElementById('likebtn').className ="far fa-heart fa-3x";
-        document.getElementById('likebtn').style.color ="black";
-        document.getElementById('likebtn').title ="Like song";
-        status = 0
-        }
-        else
-        {
-            document.getElementById('likebtn').className ="fas fa-heart fa-3x";
-            document.getElementById('likebtn').style.color ="red";
-            document.getElementById('likebtn').title ="Liked";
-            status = 1
-        }
-        <!-- AJAX for response text    -->
-        var url = "like_dislike?songid="+song_id+"&status="+status;
-        var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function() {
-                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                            if (xmlhttp.responseText == 'song is added to your playlist.')
-                            {
-                                document.getElementById("msg").style.color ="green";
-                                document.getElementById("msg").innerHTML = xmlhttp.responseText;
-                                setTimeout(function()
-                                {
-                                    document.getElementById("msg").innerHTML = '';
-                                }, 3000);
-                            }
-
-                            else if (xmlhttp.responseText == "You don't have your playlist please create your playlist first.")
-                            {
-                                document.getElementById('likebtn').className ="far fa-heart fa-3x";
-                                document.getElementById('likebtn').style.color ="black";
-                                document.getElementById("msg").innerHTML = xmlhttp.responseText;
-                                document.getElementById("msg").style.color ="red";
-                                setTimeout(function()
-                                {
-                                    document.getElementById("msg").innerHTML = '';
-                                }, 5000);
-                                document.getElementById("create_playlist_id").hidden = false;
-                            }
-
-                            else
-                            {
-                                document.getElementById('likebtn').className ="far fa-heart fa-3x";
-                                document.getElementById('likebtn').style.color ="black";
-                                document.getElementById('likebtn').title ="Like song";
-                                document.getElementById("msg").innerHTML = xmlhttp.responseText;
-                                document.getElementById("msg").style.color ="red";
-                                setTimeout(function()
-                                {
-                                    document.getElementById("msg").innerHTML = '';
-                                }, 3000);
-                            }
-                    }
-                };
-                xmlhttp.open("GET",url, true);
-                xmlhttp.send();
-    };
-
-</script>
+        };
+    </script>
 
 
 </body>
+
 </html>
