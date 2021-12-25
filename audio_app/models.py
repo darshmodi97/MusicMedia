@@ -123,6 +123,7 @@ class Songs(models.Model):
 
     class Meta:
         db_table = 'Songs'
+        verbose_name_plural ="Songs"
 
     def __str__(self):
         return self.name
