@@ -142,7 +142,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_HOSTNAME= '127.0.0.1:8000'
-
+FIXTURE_DIRS =[
+    os.path.join(BASE_DIR,"fixtures")
+]
 # CRISPY TEMPLATE PACK ....
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
